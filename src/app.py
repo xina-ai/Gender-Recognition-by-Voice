@@ -34,7 +34,7 @@ def audio_prediction(audio_data):
     return pred[0][1]
 
 
-@app.route("/predict", METHODS=['POST'])
+@app.route("/predict", methods=['POST'])
 def predict():
     audio_data = request.get_json()['audio']
     start_time = time.time()
@@ -53,4 +53,4 @@ def predict():
 if __name__ == "__main__":
     MODEL = XGBClassifier()
     MODEL.load_model(config.MODEL_PATH)
-    app.run()
+    app.run(host='0.0.0.0')
