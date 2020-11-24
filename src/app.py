@@ -7,6 +7,7 @@ import numpy as np
 from flask import Flask, request
 from utils import extract_features
 from pydub import AudioSegment
+from flask_cors import CORS
 import warnings
 warnings.filterwarnings('ignore')
 import base64
@@ -14,7 +15,7 @@ import io
 import os
 
 app = Flask(__name__)
-
+CORS(app)
 MODEL = None
 
 
