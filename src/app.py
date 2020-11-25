@@ -16,7 +16,8 @@ import os
 
 app = Flask(__name__)
 CORS(app)
-MODEL = None
+MODEL = XGBClassifier()
+MODEL.load_model(config.MODEL_PATH)
 
 
 def audio_prediction(audio_data):
@@ -52,6 +53,4 @@ def predict():
 
 
 if __name__ == "__main__":
-    MODEL = XGBClassifier()
-    MODEL.load_model(config.MODEL_PATH)
     app.run(host='0.0.0.0')
