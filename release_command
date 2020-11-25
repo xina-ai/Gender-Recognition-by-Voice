@@ -1,0 +1,1 @@
+nohup python3 app.py > log22.txt 2>&1 &
