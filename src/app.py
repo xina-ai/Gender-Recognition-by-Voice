@@ -18,21 +18,17 @@ app = Flask(__name__)
 CORS(app)
 MODEL = XGBClassifier()
 MODEL.load_model(config.MODEL_PATH)
+scaler = pickle.load(open(config.SCALAR_PATH, 'rb'))
 
 
 def audio_prediction(audio_data):
     data = base64.b64decode(audio_data)
-    AudioSegment.from_file(io.BytesIO(data)).low_pass_filter(8000).set_frame_rate(48000).export(
-        "tmp.mp3", format="mp3", bitrate='64k')
-    feats = extract_features(
-        'tmp.mp3', mel=True, mfcc=True, chroma=True, contrast=True)
-    scaler = pickle.load(open(config.SCALAR_PATH, 'rb'))
+    audio = AudioSegment.from_file(io.BytesIO(
+        data)).low_pass_filter(8000).set_frame_rate(48000)
+    feats = extract_features(audio, mel=True, mfcc=True,
+                             chroma=True, contrast=True)
     X = scaler.transform(feats.reshape(1, -1))
     pred = MODEL.predict_proba(X)
-    try:
-        os.remove('tmp.mp3')
-    except:
-        pass
     return pred[0][1]
 
 
@@ -53,5 +49,5 @@ def predict():
 
 
 if __name__ == "__main__":
-    #app.run(host='0.0.0.0')
-    app.run(debug=True, use_reloader=True, host="0.0.0.0",port=5000)
+    # app.run(host='0.0.0.0')
+    app.run(debug=True, use_reloader=True, host="0.0.0.0", port=5000)
