@@ -36,11 +36,12 @@ def extract_features(raw_audio, **kwargs):
     mel = kwargs.get("mel")
     contrast = kwargs.get("contrast")
     tonnetz = kwargs.get("tonnetz")
-    X, sample_rate = librosa.core.load(io.BytesIO(raw_audio), sr=48000)
+    # X, sample_rate = librosa.core.load(io.BytesIO(raw_audio), sr=48000)
+    X, sample_rate = librosa.core.load(raw_audio)
     # X = np.array(audio.get_array_of_samples()).astype(np.float32)
     # sample_rate = audio.frame_rate
-    b, a = signal.butter(5, 8000 / 48000, 'low')
-    X = signal.filtfilt(b, a, X)
+    # b, a = signal.butter(5, 8000 / 48000, 'low')
+    # X = signal.filtfilt(b, a, X)
     if chroma or contrast:
         stft = np.abs(librosa.stft(X))
     result = np.array([])
