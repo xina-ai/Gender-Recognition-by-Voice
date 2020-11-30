@@ -2,6 +2,8 @@ import librosa
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
+import io
+from scipy import signal
 
 
 def plot_raw_audio(audio_file):
@@ -17,7 +19,7 @@ def plot_raw_audio(audio_file):
     plt.show()
 
 
-def extract_features(audio, **kwargs):
+def extract_features(raw_audio, **kwargs):
     """
     Extract feature from audio file `file_name`
         Features supported:
@@ -34,9 +36,11 @@ def extract_features(audio, **kwargs):
     mel = kwargs.get("mel")
     contrast = kwargs.get("contrast")
     tonnetz = kwargs.get("tonnetz")
-    # X, sample_rate = librosa.core.load(filename)
-    X = np.array(audio.get_array_of_samples()).astype(np.float32)
-    sample_rate = audio.frame_rate
+    X, sample_rate = librosa.core.load(io.BytesIO(raw_audio), sr=48000)
+    # X = np.array(audio.get_array_of_samples()).astype(np.float32)
+    # sample_rate = audio.frame_rate
+    b, a = signal.butter(5, 8000 / 48000, 'low')
+    X = signal.filtfilt(b, a, X)
     if chroma or contrast:
         stft = np.abs(librosa.stft(X))
     result = np.array([])

@@ -23,9 +23,9 @@ scaler = pickle.load(open(config.SCALAR_PATH, 'rb'))
 
 def audio_prediction(audio_data):
     data = base64.b64decode(audio_data)
-    audio = AudioSegment.from_file(io.BytesIO(
-        data)).low_pass_filter(8000).set_frame_rate(48000)
-    feats = extract_features(audio, mel=True, mfcc=True,
+    # audio = AudioSegment.from_file(io.BytesIO(
+    #     data)).low_pass_filter(8000).set_frame_rate(48000)
+    feats = extract_features(data, mel=True, mfcc=True,
                              chroma=True, contrast=True)
     X = scaler.transform(feats.reshape(1, -1))
     pred = MODEL.predict_proba(X)
