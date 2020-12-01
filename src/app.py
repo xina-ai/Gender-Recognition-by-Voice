@@ -21,11 +21,11 @@ MODEL.load_model(config.MODEL_PATH)
 scaler = pickle.load(open(config.SCALAR_PATH, 'rb'))
 
 
-def audio_prediction(audio_data):
+def audio_prediction(audio_data, user_name):
     data = base64.b64decode(audio_data)
     AudioSegment.from_file(io.BytesIO(data)).low_pass_filter(8000).set_frame_rate(48000).export(
-        "tmp.mp3", format="mp3", bitrate='64k')
-    feats = extract_features('tmp.mp3', mel=True, mfcc=True,
+        "{}.mp3".format(user_name), format="mp3", bitrate='64k')
+    feats = extract_features('{}.mp3'.format(user_name), mel=True, mfcc=True,
                              chroma=True, contrast=True)
     X = scaler.transform(feats.reshape(1, -1))
     pred = MODEL.predict_proba(X)
@@ -35,8 +35,9 @@ def audio_prediction(audio_data):
 @app.route("/predict", methods=['POST'])
 def predict():
     audio_data = request.get_json()['audio']
+    user_name = request.get_json()['user_name']
     start_time = time.time()
-    male_prediction = audio_prediction(audio_data)
+    male_prediction = audio_prediction(audio_data, user_name)
     female_prediction = 1 - male_prediction
     response = {}
     response["response"] = {
